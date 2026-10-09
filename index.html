@@ -46,7 +46,7 @@
 <body>
   <div class="app" data-dimension="material">
     <header class="topbar">
-      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 007</span></a>
+      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 008</span></a>
       <div class="top-actions">
         <span class="prototype-label"><i></i> PROTÓTIPO JOGÁVEL</span>
         <button id="sound-button" class="icon-button" aria-label="Ativar som" aria-pressed="false" title="Ativar som">SOM <span>OFF</span></button>
@@ -76,18 +76,18 @@
           <button id="exit-button" class="exit-button" hidden><kbd>F</kbd> ENTRAR NA SALA DO INQUILINO</button>
           <div id="damage-vignette" class="damage-vignette"></div>
         </div>
-        <div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span><span><kbd>MOUSE</kbd> Mirar / segurar clique para atirar</span><span><kbd>ESPAÇO</kbd> Atravessar</span><span><kbd>F</kbd> Entrar pela porta</span><span><kbd>Q</kbd> Último Rito</span><span><kbd>R</kbd> Reiniciar</span></div>
+        <div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span><span><kbd>MOUSE</kbd> Mirar / segurar clique para atirar</span><span><kbd>ESPAÇO</kbd> Atravessar</span><span><kbd>F</kbd> Entrar pela porta</span><span><kbd>Q</kbd> Avançar entre marcados no espírito</span><span><kbd>R</kbd> Reiniciar</span></div>
       </section>
 
       <aside class="sidebar">
         <section class="player-panel"><div class="panel-heading"><span>01 / SINAIS VITAIS</span><span class="tiny-cross">+</span></div><div class="health-number"><span id="health-value">100</span><span>/ 100</span></div><div class="health-track"><div id="health-fill"></div></div><div class="panel-caption"><span>VOCÊ AINDA ESTÁ AQUI</span><span id="health-state">ESTÁVEL</span></div></section>
         <section class="dimension-panel"><div class="panel-heading"><span>02 / TRAVESSIA</span><span id="shift-ready">PRONTA</span></div><div class="dimension-selector"><div id="material-tab" class="dimension-tab active"><span>I</span> MATÉRIA</div><div id="spirit-tab" class="dimension-tab"><span>II</span> ESPÍRITO</div></div><div class="shift-track"><div id="shift-fill"></div></div><p id="dimension-description">A pistola principal cria fraturas. No espírito, um tiro as detona.</p><div class="pressure-meter"><div><span>PRESSÃO ESPIRITUAL</span><span id="pressure-value">0 / 100</span></div><div class="pressure-track"><div id="pressure-fill"></div><i></i></div><p id="pressure-hint">A matéria dissipa a pressão.</p></div><div class="key-hint"><kbd>ESPAÇO</kbd><span id="shift-hint">Atravesse para o outro lado</span></div></section>
-        <section class="ultimate-panel"><div class="panel-heading"><span>03 / ÚLTIMO RITO</span><span id="ultimate-value">0%</span></div><div class="ultimate-track"><div id="ultimate-fill"></div></div><button id="ultimate-button" disabled><kbd>Q</kbd> DASH + RAJADA 360°</button><p id="ultimate-hint">Cause dano para carregar. Dash na direção da mira.</p><p>3 dashes · 6 segundos · invulnerável durante o dash</p></section>
+        <section class="ultimate-panel"><div class="panel-heading"><span>03 / ÚLTIMO RITO</span><span id="ultimate-value">0%</span></div><div class="ultimate-track"><div id="ultimate-fill"></div></div><button id="ultimate-button" disabled><kbd>Q</kbd> AVANÇO ENTRE MARCADOS</button><p id="ultimate-hint">Cause dano para carregar. Use no espírito.</p><p>Até 3 avanços · consome as marcas no impacto</p></section>
         <section class="specimen-panel"><div class="panel-heading"><span>04 / A PRESENÇA</span><span>◉</span></div><div class="specimen-illustration" aria-hidden="true"><div class="specimen-ring"></div><div class="specimen-body"><i></i></div><span class="specimen-index">FIG. 01</span></div><div class="specimen-title"><h2 id="specimen-name">Ecos do átrio</h2><span id="form-tag">CARAPAÇA</span></div><p id="enemy-description">Lento. Blindado. Aproxima-se e investe em linha reta.</p><div class="enemy-facts"><div><span>DANO RECEBIDO</span><strong id="damage-multiplier">×0,28</strong></div><div><span>AMEAÇA</span><strong id="threat-label">INVESTIDA</strong></div></div></section>
         <div class="objective"><span class="eyebrow">SEU OBJETIVO</span><div class="route"><span id="route-hall" class="active">01 ÁTRIO</span><span>→</span><span id="route-boss">02 INQUILINO</span></div><p id="objective-text">Elimine os ecos e libere a passagem.</p><span id="objective-caption">Sua vida continua na próxima sala.</span></div>
       </aside>
     </main>
-    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>007</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
+    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>008</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
   </div>
   <script type="module">
 const RULES = Object.freeze({
@@ -95,7 +95,7 @@ const RULES = Object.freeze({
   enemyHealth: 360, shotDamage: 6, shotInterval: .18, bulletSpeed: 670,
   shiftCooldown: 2.2, armor: .55, echoArmor: .8, spiritDamage: 32,
   maxFractures: 3, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
-  ultimateWindow: 6, dashDuration: .42, dashDistance: 155, ultimateBullets: 16, ultimateDamage: 8, ultimateGain: .55,
+  ultimateWindow: 6, dashSpeed: 1350, ultimateUses: 3, ultimateGain: .55,
   pressureGain: 15, pressureRecovery: 25, pressureThreshold: 60,
   riftWarning: .9, riftDuration: 1.2, riftInterval: 1.15, riftRadius: 75, riftDamage: 14, riftLead: .65,
 });
@@ -163,6 +163,7 @@ class Combat {
   drainEvents() { const result = this.events; this.events = []; return result; }
   cross() {
     if (this.phase !== 'playing') return false;
+    if (this.ultimate.dash) { this.emit('dashLocked'); return false; }
     if (this.shift > 0) { this.emit('cooldown'); return false; }
     this.dimension = this.dimension === 'material' ? 'spirit' : 'material';
     this.shift = RULES.shiftCooldown; this.shiftFlash = 1; this.stats.shifts++;
@@ -175,20 +176,38 @@ class Combat {
   useUltimate(aim) {
     if (this.phase !== 'playing') return false;
     const u = this.ultimate, p = this.player;
+    if (this.ultimate.dash && this.dimension !== 'spirit') { this.emit('dashLocked'); return false; }
+    if (this.dimension !== 'spirit') { this.emit('dashWrongPlane'); return false; }
+    const reserved=[...(u.dash?[u.dash.targetId]:[]),...u.queue];
+    const target=this.findMarkedTarget(aim,reserved);
+    if (!target) { this.emit('dashNoTarget'); return false; }
     if (u.timer <= 0) {
       if (u.charge < 100) { this.emit('ultimateEmpty'); return false; }
-      u.charge = 0; u.remaining = 3; u.timer = RULES.ultimateWindow;
+      u.charge = 0; u.remaining = RULES.ultimateUses; u.timer = RULES.ultimateWindow;
     }
     if (u.remaining <= u.queue.length) return false;
-    const direction = aim ? unit(aim.x-p.x, aim.y-p.y) : { ...p.facing };
-    if (u.dash) u.queue.push(direction);
-    else this.beginDash(direction);
+    if (u.dash) u.queue.push(target.id);
+    else this.beginDash(target);
     return true;
   }
-  beginDash(direction) {
-    const u = this.ultimate;
-    u.remaining--; u.dash = { ...direction, time: RULES.dashDuration, shotsFired: 0, trailTimer: 0 };
-    this.player.facing = direction; this.stats.dashes++;
+  findMarkedTarget(aim, excluded=[]) {
+    const p=this.player, direction=aim?unit(aim.x-p.x,aim.y-p.y):p.facing;
+    return this.enemies.filter(e=>e.hp>0&&e.fractures>0&&e.fractureTime>0&&!excluded.includes(e.id))
+      .map(enemy=>{
+        const toward=unit(enemy.x-p.x,enemy.y-p.y),dot=direction.x*toward.x+direction.y*toward.y;
+        return {enemy,dot,score:(1-dot)*240+distance(p,enemy)*.08};
+      }).filter(candidate=>candidate.dot>.3)
+      .sort((a,b)=>a.score-b.score)[0]?.enemy||null;
+  }
+  beginDash(target) {
+    const u=this.ultimate,p=this.player,direction=unit(target.x-p.x,target.y-p.y);
+    const travel=distance(p,target)+target.radius+RULES.playerRadius+12;
+    const duration=clamp(travel/RULES.dashSpeed,.16,1.1);
+    u.remaining--;
+    u.dash={targetId:target.id,x:direction.x,y:direction.y,angle:Math.atan2(direction.y,direction.x),
+      start:{x:p.x,y:p.y},end:{x:p.x+direction.x*travel,y:p.y+direction.y*travel},distance:travel,
+      time:duration,duration,trailTimer:0,hit:false};
+    p.facing=direction;this.stats.dashes++;this.stats.shots++;
     this.emit('dash');
   }
   updateUltimate(dt) {
@@ -197,42 +216,34 @@ class Combat {
     if (u.timer === 0) { u.remaining = 0; u.queue = []; }
     const d = u.dash;
     if (!d) return false;
-    const elapsed=RULES.dashDuration-d.time,step = Math.min(dt, d.time);
-    p.vx = d.x * RULES.dashDistance / RULES.dashDuration;
-    p.vy = d.y * RULES.dashDistance / RULES.dashDuration;
-    p.x = clamp(p.x+p.vx*step,-limit,limit); p.y = clamp(p.y+p.vy*step,-limit,limit);
-    p.invulnerable = Math.max(p.invulnerable, dt+.01);
-    d.time = Math.max(0,d.time-dt);
+    const elapsed=d.duration-d.time,step=Math.min(dt,d.time),old={x:p.x,y:p.y};
+    p.vx=d.x*d.distance/d.duration;p.vy=d.y*d.distance/d.duration;
+    const progress=clamp((elapsed+step)/d.duration,0,1);
+    p.x=clamp(d.start.x+d.x*d.distance*progress,-limit,limit);p.y=clamp(d.start.y+d.y*d.distance*progress,-limit,limit);
+    p.invulnerable=Math.max(p.invulnerable,step+.01);
+    const target=this.enemies.find(e=>e.id===d.targetId);
+    if(!d.hit&&target?.hp>0&&segmentDistance(target,old,p)<target.radius+RULES.playerRadius) {
+      d.hit=true;this.hurtEnemy(RULES.shotDamage,'spirit',target,'dash',{x:d.x,y:d.y});this.emit('dashStrike');
+    }
+    d.time = Math.max(0,d.time-step);
     if(d.time < 1e-9)d.time=0;
-    const progress = 1-d.time/RULES.dashDuration;
     d.trailTimer -= step;
     while (d.trailTimer <= 0) {
-      const sample=clamp((elapsed+step+d.trailTimer)/RULES.dashDuration,0,1);
+      const sample=clamp((elapsed+step+d.trailTimer)/d.duration,0,1);
       this.trails.push({ x:clamp(p.x+p.vx*d.trailTimer,-limit,limit), y:clamp(p.y+p.vy*d.trailTimer,-limit,limit),
-        angle:this.spinAngle(d,sample), dimension:this.dimension, life:.38, max:.38 });
+        angle:d.angle,dashProgress:sample,dimension:this.dimension,life:.38,max:.38 });
       d.trailTimer += .06;
-    }
-    const pairs = RULES.ultimateBullets/2;
-    while (d.shotsFired < pairs && progress >= (d.shotsFired+.5)/pairs) {
-      const i = d.shotsFired++, angle=this.spinAngle(d,(i+.5)/pairs);
-      for (const offset of [0,Math.PI]) {
-        const a=angle+offset, dx=Math.cos(a), dy=Math.sin(a);
-        this.bullets.push({x:p.x+dx*22,y:p.y+dy*22,dx,dy,speed:RULES.bulletSpeed,
-          owner:'player',source:'ultimate',damage:RULES.ultimateDamage,dimension:this.dimension,life:.85});
-        this.burst(p.x+dx*25,p.y+dy*25,'muzzle',2);
-      }
-      this.stats.shots += 2;
-      if (i===0) this.rings.push({x:p.x,y:p.y,life:.35,max:.35,kind:'ultimate',dimension:this.dimension});
-      if (i===0 || i===4) this.emit('volley');
     }
     if (d.time === 0) {
       u.dash = null;
-      if (u.queue.length && u.timer > 0) this.beginDash(u.queue.shift());
+      if (u.queue.length && u.timer > 0) {
+        const next=this.enemies.find(e=>e.id===u.queue.shift()&&e.hp>0&&e.fractures>0);
+        if(next)this.beginDash(next);
+      }
       else if (u.remaining === 0) u.timer = 0;
     }
     return true;
   }
-  spinAngle(d, progress) { return Math.atan2(d.y,d.x)+progress*Math.PI*2; }
   shoot(aim) {
     if (this.phase !== 'playing' || this.player.fire > 0 || this.ultimate.dash) return;
     const p = this.player, dir = unit(aim.x - p.x, aim.y - p.y);
@@ -282,7 +293,7 @@ class Combat {
       this.emit(fullRupture ? 'rupture' : 'detonation');
     }
     const damage = Math.min(enemy.hp, actual), u = this.ultimate;
-    if (source !== 'ultimate' && u.timer === 0) {
+    if (!['ultimate','dash'].includes(source) && u.timer === 0) {
       const oldCharge = u.charge;
       u.charge = Math.min(100, u.charge + damage * RULES.ultimateGain);
       if (oldCharge < 100 && u.charge === 100) this.emit('ultimateReady');
@@ -550,7 +561,7 @@ class Renderer {
     for (const actor of actors) {
       if (actor.kind === 'player') this.drawPlayer(game, p); else this.drawEnemy(game, p, actor);
     }
-    if(game.ultimate.dash&&!this.reducedMotion)this.drawSpin(game,p);
+    if(game.ultimate.dash&&!this.reducedMotion)this.drawDash(game,p);
     for (const bullet of game.bullets) this.drawBullet(bullet, game.dimension, p);
     for (const part of game.particles) {
       const point = this.project(part.x, part.y, Math.max(1, part.z));
@@ -645,18 +656,17 @@ class Renderer {
     const p=game.player,a=this.project(p.x,p.y,22),b=this.project(p.x+p.facing.x*380,p.y+p.facing.y*380,22);
     const ctx=this.ctx;ctx.save();ctx.setLineDash([2,9]);ctx.globalAlpha=.15;this.line([a,b],palettes[game.dimension].accent);ctx.restore();
   }
-  drawSpin(game,palette) {
-    const d=game.ultimate.dash, angle=game.spinAngle(d,1-d.time/RULES.dashDuration);
-    const aim={x:(Math.cos(angle)-Math.sin(angle))*.95,y:(Math.cos(angle)+Math.sin(angle))*.52};
-    const heading=Math.atan2(aim.y,aim.x),q=this.project(game.player.x,game.player.y,43),ctx=this.ctx,s=this.scale;
-    ctx.save();ctx.strokeStyle=palette.accent;ctx.lineWidth=2.7*s;ctx.globalAlpha=.78;
-    for(const offset of [0,Math.PI]) {
-      ctx.beginPath();ctx.arc(q.x,q.y,42*s,heading+offset-1.05,heading+offset);ctx.stroke();
-      const x=q.x+Math.cos(heading+offset)*42*s,y=q.y+Math.sin(heading+offset)*42*s;
-      this.glow(x,y,15*s,palette.accent,.32);
-      this.ellipse(x,y,2.6*s,2.6*s,'#fff2cf');
+  drawDash(game,palette) {
+    const d=game.ultimate.dash,p=game.player,q=this.project(p.x,p.y,30),ctx=this.ctx,s=this.scale;
+    const dir={x:(d.x-d.y)*.95,y:(d.x+d.y)*.52};
+    ctx.save();ctx.globalAlpha=.65;ctx.strokeStyle=palette.accent;ctx.lineWidth=2*s;
+    for(let i=0;i<4;i++) {
+      const length=(34+i*13)*s,offset=(i-1.5)*5*s;
+      const side={x:-dir.y,y:dir.x};
+      this.line([{x:q.x-dir.x*length+side.x*offset,y:q.y-dir.y*length+side.y*offset},
+        {x:q.x-dir.x*8*s+side.x*offset*.25,y:q.y-dir.y*8*s+side.y*offset*.25}],palette.accent,Math.max(1,(3-i*.45)*s));
     }
-    ctx.restore();
+    this.glow(q.x,q.y,45*s,palette.glow,.25);ctx.restore();
   }
   drawRifts(game) {
     const ctx=this.ctx,s=this.scale;
@@ -704,14 +714,14 @@ class Renderer {
   }
   drawPlayer(game,palette,pose=null) {
     const p=game.player,ctx=this.ctx,s=this.scale,q=this.project(pose?.x??p.x,pose?.y??p.y);
-    const dash=game.ultimate.dash,spinning=!!pose?.ghost||(!pose&&!!dash);
-    const walking=!spinning&&p.moving?Math.sin(game.time*18)*6:0;
-    const worldAngle=spinning?(pose?.angle??game.spinAngle(dash,1-dash.time/RULES.dashDuration)):Math.atan2(p.facing.y,p.facing.x);
+    const dash=game.ultimate.dash,lunging=!!pose?.ghost||(!pose&&!!dash);
+    const walking=!lunging&&p.moving?Math.sin(game.time*18)*6:0;
+    const worldAngle=lunging?(pose?.angle??dash.angle):Math.atan2(p.facing.y,p.facing.x);
     const turn=Math.sin(worldAngle),front=turn*6;
     if(!pose?.ghost) { this.ellipse(q.x,q.y+2*s,23*s,10*s,'#0006'); this.glow(q.x,q.y,68*s,palette.glow,.12); }
     ctx.save();ctx.translate(q.x,q.y);ctx.scale(s,s);
     if(pose?.ghost) {ctx.globalAlpha=pose.alpha;ctx.shadowBlur=16;ctx.shadowColor=palette.accent;}
-    else if(spinning) this.ellipse(0,-34,25,39,palette.glow+'44');
+    else if(lunging) this.ellipse(0,-34,25,39,palette.glow+'44');
     else if(p.invulnerable>0&&!this.reducedMotion)ctx.globalAlpha=.55+Math.sin(game.time*38)*.2;
     const poly=(coords,fill,stroke)=>this.poly(coords.map(([x,y])=>({x,y})),fill,stroke);
     // Boots, split coat, shoulders, hair, and an off-white face.
@@ -726,11 +736,10 @@ class Renderer {
     const direction={x:Math.cos(worldAngle),y:Math.sin(worldAngle)};
     const aim={x:(direction.x-direction.y)*.95,y:(direction.x+direction.y)*.52};
     const angle=Math.atan2(aim.y,aim.x);
-    // Both arms are visible at all times. In the rite they point in opposite
-    // directions and follow the same full turn as the paired radial bullets.
+    // Both arms align toward the selected mark during a spirit dash.
     for (const hand of [0,1]) {
-      const side=hand===0?-1:1, firing=!pose?.ghost&&!spinning&&p.hand===1-hand&&p.fire>RULES.shotInterval-.06;
-      ctx.save();ctx.translate(side*10,-43);ctx.rotate(angle+(spinning&&hand===0?Math.PI:side*.11));
+      const side=hand===0?-1:1, firing=!pose?.ghost&&!lunging&&p.hand===1-hand&&p.fire>RULES.shotInterval-.06;
+      ctx.save();ctx.translate(side*10,-43);ctx.rotate(angle+side*(lunging?.055:.11));
       const recoil=firing?(p.recoil||0)*6:0;ctx.translate(-recoil,0);
       ctx.fillStyle=hand===0?'#718065':'#829172';ctx.fillRect(0,-5,18,10);
       ctx.fillStyle='#c4bea0';ctx.fillRect(16,-3,7,6);
@@ -738,7 +747,7 @@ class Renderer {
       ctx.fillStyle='#bcc2a6';ctx.fillRect(25,-5,13,2);
       ctx.fillStyle='#252b20';ctx.fillRect(23,2,5,7);
       if(firing&&!this.reducedMotion) poly([[39,-3],[49,-8],[46,-1],[55,0],[46,3],[49,8],[39,4]],'#f3dfa2');
-      if(spinning&&!pose?.ghost&&!this.reducedMotion) this.glow(40,0,12,palette.accent,.14);
+      if(lunging&&!pose?.ghost&&!this.reducedMotion) this.glow(40,0,12,palette.accent,.14);
       ctx.restore();
     }
     if(!pose?.ghost)ctx.globalAlpha=1;
@@ -953,7 +962,10 @@ window.addEventListener('blur', () => { clearInput(); game.pause(); });
 document.addEventListener('visibilitychange', () => { if(document.hidden){clearInput();game.pause();} previousTime=performance.now(); });
 $('play-button').addEventListener('click', () => { if(game.phase==='paused'){game.resume();canvas.focus();}else start(); });
 $('pause-button').addEventListener('click', togglePause);
-$('ultimate-button').addEventListener('click', () => { game.useUltimate(); canvas.focus(); });
+$('ultimate-button').addEventListener('click', () => {
+  const aim=pointer.inside?renderer.aimAt(pointer.x,pointer.y,game.enemies):null;
+  game.useUltimate(aim);canvas.focus();
+});
 $('exit-button').addEventListener('click', () => { game.interact(); canvas.focus(); });
 $('sound-button').addEventListener('click', async () => {
   try {
@@ -1039,10 +1051,13 @@ function updateHUD(now) {
     $('threat-label').textContent=pressureHigh?'RAJADAS + FISSURAS':'PROJÉTEIS';
   }
   const u=game.ultimate, active=u.timer>0, ready=u.charge>=100;
+  const aim=pointer.inside?renderer.aimAt(pointer.x,pointer.y,game.enemies):null;
+  const reserved=[...(u.dash?[u.dash.targetId]:[]),...u.queue];
+  const hasMarkedTarget=!!game.findMarkedTarget(aim,reserved);
   $('ultimate-value').textContent=active?`${u.remaining} / 3 · ${u.timer.toFixed(1)}s`:ready?'PRONTO':`${Math.floor(u.charge)}%`;
   $('ultimate-fill').style.width=`${active?u.timer/RULES.ultimateWindow*100:u.charge}%`;
-  $('ultimate-button').disabled=game.phase!=='playing'||(active?u.remaining<=u.queue.length:!ready);
-  $('ultimate-hint').textContent=active?'Q novamente para encadear. Mire cada dash.':ready?'Três dashes disponíveis. Q para começar.':'Cause dano para carregar. Dash na direção da mira.';
+  $('ultimate-button').disabled=game.phase!=='playing'||!spirit||!hasMarkedTarget||(active?u.remaining<=u.queue.length:!ready);
+  $('ultimate-hint').textContent=!spirit?'Atravesse para o espírito e mire em um alvo marcado.':!hasMarkedTarget?'Marque um inimigo na matéria e aponte para ele.':active?'Q novamente para avançar a outro alvo marcado.':ready?'Q para avançar pelo inimigo e romper suas marcas.':'Cause dano para carregar. Use no espírito.';
   labels['elapsed'].textContent=`${String(Math.floor(game.time/60)).padStart(2,'0')}:${String(Math.floor(game.time%60)).padStart(2,'0')}`;
   labels['damage-vignette'].style.opacity=renderer.reducedMotion?0:game.damageFlash*.24;
   if(now>noticeUntil)$('notice').classList.remove('visible');
@@ -1057,9 +1072,12 @@ function frame(now) {
   game.update(dt,{move,aim,shooting:pointer.down&&pointer.inside});
   for(const event of game.drainEvents()) {
     sound.play(event.type==='hit'&&event.armored?'armor':event.type);
-    if(event.type==='ultimateReady')showNotice('ÚLTIMO RITO PRONTO · Q PARA TRÊS DASHES COM TIROS EM 360°.',3);
+    if(event.type==='ultimateReady')showNotice('ÚLTIMO RITO PRONTO · ATRAVESSE E AVANCE ENTRE ALVOS MARCADOS.',3);
     if(event.type==='markReady')showNotice('TRÊS MARCAS · RUPTURA PRONTA.',1.7);
     if(event.type==='ultimateEmpty')showNotice('CAUSE DANO PARA CARREGAR O ÚLTIMO RITO.',1.5);
+    if(event.type==='dashWrongPlane')showNotice('O AVANÇO SÓ ACONTECE NO ESPÍRITO.',1.7);
+    if(event.type==='dashNoTarget')showNotice('MIRE EM UM INIMIGO MARCADO PARA AVANÇAR.',1.7);
+    if(event.type==='dashLocked')showNotice('A TRAVESSIA AGUARDA O FIM DO AVANÇO.',1.2);
     if(event.type==='rupture')showNotice('RUPTURA COMPLETA · ATAQUE INTERROMPIDO.',1);
     if(event.type==='shift')showNotice(event.dimension==='spirit'?'ATIRE NOS ALVOS MARCADOS PARA DETONAR AS FRATURAS.':'PREPARE FRATURAS. A PRESSÃO ESTÁ DIMINUINDO.',2.3);
     if(event.type==='cooldown')showNotice('AGUARDE A RECARGA DA TRAVESSIA.',.8);
