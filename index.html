@@ -46,7 +46,7 @@
 <body>
   <div class="app" data-dimension="material">
     <header class="topbar">
-      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 006</span></a>
+      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 007</span></a>
       <div class="top-actions">
         <span class="prototype-label"><i></i> PROTÓTIPO JOGÁVEL</span>
         <button id="sound-button" class="icon-button" aria-label="Ativar som" aria-pressed="false" title="Ativar som">SOM <span>OFF</span></button>
@@ -87,14 +87,14 @@
         <div class="objective"><span class="eyebrow">SEU OBJETIVO</span><div class="route"><span id="route-hall" class="active">01 ÁTRIO</span><span>→</span><span id="route-boss">02 INQUILINO</span></div><p id="objective-text">Elimine os ecos e libere a passagem.</p><span id="objective-caption">Sua vida continua na próxima sala.</span></div>
       </aside>
     </main>
-    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>006</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
+    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>007</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
   </div>
   <script type="module">
 const RULES = Object.freeze({
   room: 310, playerSpeed: 195, playerRadius: 13, enemyRadius: 27, playerHealth: 100,
   enemyHealth: 360, shotDamage: 6, shotInterval: .18, bulletSpeed: 670,
   shiftCooldown: 2.2, armor: .55, echoArmor: .8, spiritDamage: 32,
-  maxFractures: 6, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
+  maxFractures: 3, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
   ultimateWindow: 6, dashDuration: .42, dashDistance: 155, ultimateBullets: 16, ultimateDamage: 8, ultimateGain: .55,
   pressureGain: 15, pressureRecovery: 25, pressureThreshold: 60,
   riftWarning: .9, riftDuration: 1.2, riftInterval: 1.15, riftRadius: 75, riftDamage: 14, riftLead: .65,
@@ -806,6 +806,14 @@ class Renderer {
       }
       ctx.restore();
     }
+    if(e.fractures===RULES.maxFractures&&e.fractureReadyAge!==null) {
+      const age=e.fractureReadyAge,fade=clamp(age/.32,0,1),shake=age<.58?Math.sin(age*88)*(1-age/.58)*4*this.scale:0;
+      const x=q.x+shake,y=q.y-(e.kind==='boss'?178:150)*this.scale+Math.cos(age*77)*(1-fade)*2*this.scale;
+      ctx.save();ctx.globalAlpha=fade;ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.lineWidth=3.4*this.scale;
+      ctx.shadowColor='#fff';ctx.shadowBlur=25*this.scale;
+      ctx.beginPath();ctx.moveTo(x-11*this.scale,y);ctx.lineTo(x+11*this.scale,y);ctx.moveTo(x,y-11*this.scale);ctx.lineTo(x,y+11*this.scale);ctx.stroke();
+      ctx.beginPath();ctx.arc(x,y,2.8*this.scale,0,TAU);ctx.fill();ctx.restore();
+    }
   }
   drawExit(game,palette) {
     const ctx=this.ctx,e=game.exit,s=this.scale,color=game.cleared?palette.accent:'#956855';
@@ -825,14 +833,6 @@ class Renderer {
         this.poly([{x:9,y:0},{x:-6,y:-6},{x:-6,y:6}],color);ctx.restore();
         ctx.fillText('SAÍDA',x,y+20);
       }
-    }
-    if(e.fractures===RULES.maxFractures&&e.fractureReadyAge!==null) {
-      const age=e.fractureReadyAge,fade=clamp(age/.32,0,1),shake=age<.58?Math.sin(age*88)*(1-age/.58)*4*this.scale:0;
-      const x=q.x+shake,y=q.y-(e.kind==='boss'?178:150)*this.scale+Math.cos(age*77)*(1-fade)*2*this.scale;
-      ctx.save();ctx.globalAlpha=fade;ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.lineWidth=3.4*this.scale;
-      ctx.shadowColor='#fff';ctx.shadowBlur=25*this.scale;
-      ctx.beginPath();ctx.moveTo(x-11*this.scale,y);ctx.lineTo(x+11*this.scale,y);ctx.moveTo(x,y-11*this.scale);ctx.lineTo(x,y+11*this.scale);ctx.stroke();
-      ctx.beginPath();ctx.arc(x,y,2.8*this.scale,0,TAU);ctx.fill();ctx.restore();
     }
   }
   drawMinimap(game,palette) {
@@ -971,7 +971,7 @@ function updateDimension() {
   const spirit=game.dimension==='spirit',boss=game.roomId==='boss';app.dataset.dimension=game.dimension;
   $('dimension-label').innerHTML=`<i></i> PLANO ${spirit?'ESPIRITUAL':'MATERIAL'}`;
   $('material-tab').classList.toggle('active',!spirit);$('spirit-tab').classList.toggle('active',spirit);
-  $('dimension-description').textContent=spirit?'Detone as fraturas com um tiro. Permanecer aqui aumenta a pressão.':'A pistola principal marca a cada 2 tiros. Complete 6 marcas e atravesse para detonar.';
+  $('dimension-description').textContent=spirit?'Detone as fraturas com um tiro. Permanecer aqui aumenta a pressão.':'A pistola principal marca a cada 2 tiros. Complete 3 marcas e atravesse para detonar.';
   $('enemy-description').textContent=boss
     ? (spirit?'Exposto. Mantém distância e dispara três projéteis.':'Lento. Blindado. Aproxima-se e investe em linha reta.')
     : (spirit?'Frágeis. Cada eco anuncia um único disparo.':'Quatro presenças. Aproximam-se e dão investidas curtas.');
@@ -1058,7 +1058,7 @@ function frame(now) {
   for(const event of game.drainEvents()) {
     sound.play(event.type==='hit'&&event.armored?'armor':event.type);
     if(event.type==='ultimateReady')showNotice('ÚLTIMO RITO PRONTO · Q PARA TRÊS DASHES COM TIROS EM 360°.',3);
-    if(event.type==='markReady')showNotice('SEIS MARCAS · RUPTURA PRONTA.',1.7);
+    if(event.type==='markReady')showNotice('TRÊS MARCAS · RUPTURA PRONTA.',1.7);
     if(event.type==='ultimateEmpty')showNotice('CAUSE DANO PARA CARREGAR O ÚLTIMO RITO.',1.5);
     if(event.type==='rupture')showNotice('RUPTURA COMPLETA · ATAQUE INTERROMPIDO.',1);
     if(event.type==='shift')showNotice(event.dimension==='spirit'?'ATIRE NOS ALVOS MARCADOS PARA DETONAR AS FRATURAS.':'PREPARE FRATURAS. A PRESSÃO ESTÁ DIMINUINDO.',2.3);
