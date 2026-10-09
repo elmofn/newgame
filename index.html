@@ -33,12 +33,20 @@
 .pressure-alert{position:absolute;left:22px;bottom:95px;padding:8px 10px;border:1px solid #b66d5e;color:#f1a490;background:#251517e8;font:9px monospace;letter-spacing:1px;pointer-events:none}
 .pressure-alert[hidden]{display:none}
 .specimen-illustration{height:100px}
+
+.ultimate-panel { padding: 20px; border-bottom: 1px solid var(--line, #3a4333); }
+.ultimate-panel p { font-size: 11px; line-height: 1.5; color: #a8ad96; margin: 10px 0 0; }
+.ultimate-track { height: 4px; background: #34382e; margin: 14px 0; }
+#ultimate-fill { height: 100%; width: 0; background: #f5d48c; }
+#ultimate-button { width: 100%; padding: 10px; background: #f5d48c18; border: 1px solid #b49b67; color: #f5d48c; font: 11px monospace; cursor: pointer; }
+#ultimate-button:disabled { opacity: .45; cursor: default; }
+#ultimate-button:focus-visible { outline: 2px solid #f5d48c; outline-offset: 3px; }
 </style>
 </head>
 <body>
   <div class="app" data-dimension="material">
     <header class="topbar">
-      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 003</span></a>
+      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 004</span></a>
       <div class="top-actions">
         <span class="prototype-label"><i></i> PROTÓTIPO JOGÁVEL</span>
         <button id="sound-button" class="icon-button" aria-label="Ativar som" aria-pressed="false" title="Ativar som">SOM <span>OFF</span></button>
@@ -50,7 +58,7 @@
       <section class="arena-section" aria-label="Arena de combate">
         <div class="arena-heading"><div><span class="eyebrow">SANTA VÉSPERA / SUBSOLO 06</span><h1><span id="room-name">O átrio dos ausentes</span><span>.</span></h1></div><span id="room-number" class="room-id">01 <span>/ 02</span></span></div>
         <div id="stage" class="stage">
-          <canvas id="game" tabindex="0" aria-label="Jogo isométrico. WASD para mover, mouse para mirar, clique para atirar, espaço para atravessar, F para entrar pela porta liberada, Esc para pausar."></canvas>
+          <canvas id="game" tabindex="0" aria-label="Jogo isométrico. WASD para mover, mouse para mirar, clique para atirar, espaço para atravessar, F para entrar pela porta liberada, Q para usar o Último Rito, Esc para pausar."></canvas>
           <div class="stage-top"><span id="dimension-label"><i></i> PLANO MATERIAL</span><span id="room-coordinate" class="coordinate">SETOR 05 — ÁTRIO</span></div>
           <div id="enemy-hud" class="enemy-hud"><div><span id="enemy-title">ECOS DO ÁTRIO</span><span id="enemy-health-label">4 / 4</span></div><div class="enemy-track"><div id="enemy-health-fill"></div></div><span id="enemy-form-label">ELIMINE OS ECOS PARA ABRIR A PORTA</span></div>
           <div id="pressure-alert" class="pressure-alert" hidden>PRESSÃO ALTA · FISSURAS ATIVAS</div>
@@ -68,17 +76,18 @@
           <button id="exit-button" class="exit-button" hidden><kbd>F</kbd> ENTRAR NA SALA DO INQUILINO</button>
           <div id="damage-vignette" class="damage-vignette"></div>
         </div>
-        <div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span><span><kbd>MOUSE</kbd> Mirar / segurar clique para atirar</span><span><kbd>ESPAÇO</kbd> Atravessar</span><span><kbd>F</kbd> Entrar pela porta</span><span><kbd>R</kbd> Reiniciar</span></div>
+        <div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Mover</span><span><kbd>MOUSE</kbd> Mirar / segurar clique para atirar</span><span><kbd>ESPAÇO</kbd> Atravessar</span><span><kbd>F</kbd> Entrar pela porta</span><span><kbd>Q</kbd> Último Rito</span><span><kbd>R</kbd> Reiniciar</span></div>
       </section>
 
       <aside class="sidebar">
         <section class="player-panel"><div class="panel-heading"><span>01 / SINAIS VITAIS</span><span class="tiny-cross">+</span></div><div class="health-number"><span id="health-value">100</span><span>/ 100</span></div><div class="health-track"><div id="health-fill"></div></div><div class="panel-caption"><span>VOCÊ AINDA ESTÁ AQUI</span><span id="health-state">ESTÁVEL</span></div></section>
         <section class="dimension-panel"><div class="panel-heading"><span>02 / TRAVESSIA</span><span id="shift-ready">PRONTA</span></div><div class="dimension-selector"><div id="material-tab" class="dimension-tab active"><span>I</span> MATÉRIA</div><div id="spirit-tab" class="dimension-tab"><span>II</span> ESPÍRITO</div></div><div class="shift-track"><div id="shift-fill"></div></div><p id="dimension-description">Tiros na matéria criam fraturas. Um tiro espiritual as detona.</p><div class="pressure-meter"><div><span>PRESSÃO ESPIRITUAL</span><span id="pressure-value">0 / 100</span></div><div class="pressure-track"><div id="pressure-fill"></div><i></i></div><p id="pressure-hint">A matéria dissipa a pressão.</p></div><div class="key-hint"><kbd>ESPAÇO</kbd><span id="shift-hint">Atravesse para o outro lado</span></div></section>
-        <section class="specimen-panel"><div class="panel-heading"><span>03 / A PRESENÇA</span><span>◉</span></div><div class="specimen-illustration" aria-hidden="true"><div class="specimen-ring"></div><div class="specimen-body"><i></i></div><span class="specimen-index">FIG. 01</span></div><div class="specimen-title"><h2 id="specimen-name">Ecos do átrio</h2><span id="form-tag">CARAPAÇA</span></div><p id="enemy-description">Lento. Blindado. Aproxima-se e investe em linha reta.</p><div class="enemy-facts"><div><span>DANO RECEBIDO</span><strong id="damage-multiplier">×0,28</strong></div><div><span>AMEAÇA</span><strong id="threat-label">INVESTIDA</strong></div></div></section>
+        <section class="ultimate-panel"><div class="panel-heading"><span>03 / ÚLTIMO RITO</span><span id="ultimate-value">0%</span></div><div class="ultimate-track"><div id="ultimate-fill"></div></div><button id="ultimate-button" disabled><kbd>Q</kbd> DASH + RAJADA 360°</button><p id="ultimate-hint">Cause dano para carregar. Dash na direção da mira.</p><p>3 dashes · 6 segundos · invulnerável durante o dash</p></section>
+        <section class="specimen-panel"><div class="panel-heading"><span>04 / A PRESENÇA</span><span>◉</span></div><div class="specimen-illustration" aria-hidden="true"><div class="specimen-ring"></div><div class="specimen-body"><i></i></div><span class="specimen-index">FIG. 01</span></div><div class="specimen-title"><h2 id="specimen-name">Ecos do átrio</h2><span id="form-tag">CARAPAÇA</span></div><p id="enemy-description">Lento. Blindado. Aproxima-se e investe em linha reta.</p><div class="enemy-facts"><div><span>DANO RECEBIDO</span><strong id="damage-multiplier">×0,28</strong></div><div><span>AMEAÇA</span><strong id="threat-label">INVESTIDA</strong></div></div></section>
         <div class="objective"><span class="eyebrow">SEU OBJETIVO</span><div class="route"><span id="route-hall" class="active">01 ÁTRIO</span><span>→</span><span id="route-boss">02 INQUILINO</span></div><p id="objective-text">Elimine os ecos e libere a passagem.</p><span id="objective-caption">Sua vida continua na próxima sala.</span></div>
       </aside>
     </main>
-    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>003</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
+    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>004</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
   </div>
   <script type="module">
 const RULES = Object.freeze({
@@ -86,6 +95,7 @@ const RULES = Object.freeze({
   enemyHealth: 360, shotDamage: 12, shotInterval: .26, bulletSpeed: 670,
   shiftCooldown: 2.2, armor: .55, echoArmor: .8, spiritDamage: 32,
   maxFractures: 3, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
+  ultimateWindow: 6, dashDuration: .18, dashDistance: 175, ultimateBullets: 16, ultimateDamage: 8, ultimateGain: .55,
   pressureGain: 15, pressureRecovery: 25, pressureThreshold: 60,
   riftWarning: .9, riftDuration: 1.2, riftInterval: 1.15, riftRadius: 75, riftDamage: 14, riftLead: .65,
 });
@@ -107,10 +117,12 @@ class Combat {
   reset() {
     this.phase = 'intro'; this.dimension = 'material'; this.time = 0;
     this.player = { x: 108, y: 175, vx: 0, vy: 0, hp: RULES.playerHealth, invulnerable: 0, fire: 0, facing: { x: -1, y: -1 }, moving: false };
+    this.ultimate = { charge: 0, remaining: 0, timer: 0, dash: null, queue: [] };
+    this.hitStop = 0; this.impact = 0; this.trails = [];
     this.shift = 0; this.shiftFlash = 0; this.damageFlash = 0;
     this.pressure = 0; this.riftTimer = 0; this.rifts = [];
     this.bullets = []; this.particles = []; this.numbers = []; this.events = []; this.rings = [];
-    this.stats = { shots: 0, hits: 0, shifts: 0, damageTaken: 0, kills: 0, detonations: 0, rifts: 0 };
+    this.stats = { shots: 0, hits: 0, shifts: 0, damageTaken: 0, kills: 0, detonations: 0, rifts: 0, dashes: 0 };
     this.loadRoom('hall');
   }
   get room() { return ROOMS[this.roomId]; }
@@ -119,12 +131,13 @@ class Combat {
   get nearExit() { return this.roomId === 'hall' && distance(this.player, this.exit) < 85; }
   loadRoom(id) {
     if (!ROOMS[id]) throw new Error(`Unknown room: ${id}`);
+    this.ultimate.dash = null; this.ultimate.queue = []; this.trails = []; this.hitStop = 0;
     this.roomId = id; this.cleared = false;
     const makeEnemy = (x, y, index, boss = false) => ({
       id: `${id}-${index}`, kind: boss ? 'boss' : 'echo', x, y,
       hp: boss ? RULES.enemyHealth : 48, maxHp: boss ? RULES.enemyHealth : 48,
       radius: boss ? RULES.enemyRadius : 18, attack: null,
-      fractures: 0, fractureTime: 0, stunned: 0,
+      fractures: 0, fractureTime: 0, stunned: 0, reaction: 0, hitDirection: { x: 0, y: 0 },
       cooldown: boss ? 1.15 : 1.5 + index * .55, flash: 0, facing: { x: 1, y: 1 },
     });
     this.enemies = id === 'hall'
@@ -159,47 +172,109 @@ class Combat {
     // Crossing avoids them but does not reset the enemy's attack clock.
     return true;
   }
+  useUltimate(aim) {
+    if (this.phase !== 'playing') return false;
+    const u = this.ultimate, p = this.player;
+    if (u.timer <= 0) {
+      if (u.charge < 100) { this.emit('ultimateEmpty'); return false; }
+      u.charge = 0; u.remaining = 3; u.timer = RULES.ultimateWindow;
+    }
+    if (u.remaining <= u.queue.length) return false;
+    const direction = aim ? unit(aim.x-p.x, aim.y-p.y) : { ...p.facing };
+    if (u.dash) u.queue.push(direction);
+    else this.beginDash(direction);
+    return true;
+  }
+  beginDash(direction) {
+    const u = this.ultimate;
+    u.remaining--; u.dash = { ...direction, time: RULES.dashDuration, fired: false };
+    this.player.facing = direction; this.stats.dashes++;
+    this.emit('dash');
+  }
+  updateUltimate(dt) {
+    const u = this.ultimate, p = this.player, limit = this.room.radius - 15;
+    u.timer = Math.max(0, u.timer-dt);
+    if (u.timer === 0) { u.remaining = 0; u.queue = []; }
+    const d = u.dash;
+    if (!d) return false;
+    const step = Math.min(dt, d.time);
+    this.trails.push({ x:p.x, y:p.y, life:.22 });
+    p.vx = d.x * RULES.dashDistance / RULES.dashDuration;
+    p.vy = d.y * RULES.dashDistance / RULES.dashDuration;
+    p.x = clamp(p.x+p.vx*step,-limit,limit); p.y = clamp(p.y+p.vy*step,-limit,limit);
+    p.invulnerable = Math.max(p.invulnerable, dt+.01);
+    d.time = Math.max(0,d.time-dt);
+    if (!d.fired && d.time <= RULES.dashDuration/2) {
+      d.fired = true;
+      for (let i=0;i<RULES.ultimateBullets;i++) {
+        const a=i*Math.PI*2/RULES.ultimateBullets;
+        this.bullets.push({x:p.x,y:p.y,dx:Math.cos(a),dy:Math.sin(a),speed:RULES.bulletSpeed,
+          owner:'player',source:'ultimate',damage:RULES.ultimateDamage,dimension:this.dimension,life:.85});
+      }
+      this.stats.shots += RULES.ultimateBullets;
+      this.rings.push({x:p.x,y:p.y,life:.35,max:.35,kind:'ultimate',dimension:this.dimension});
+      this.emit('volley');
+    }
+    if (d.time === 0) {
+      u.dash = null;
+      if (u.queue.length && u.timer > 0) this.beginDash(u.queue.shift());
+      else if (u.remaining === 0) u.timer = 0;
+    }
+    return true;
+  }
   shoot(aim) {
-    if (this.phase !== 'playing' || this.player.fire > 0) return;
+    if (this.phase !== 'playing' || this.player.fire > 0 || this.ultimate.dash) return;
     const p = this.player, dir = unit(aim.x - p.x, aim.y - p.y);
-    p.fire = RULES.shotInterval; p.facing = dir; this.stats.shots++;
+    p.recoil = 1; p.fire = RULES.shotInterval; p.facing = dir; this.stats.shots++;
     this.bullets.push({ x: p.x + dir.x * 23, y: p.y + dir.y * 23, dx: dir.x, dy: dir.y, speed: RULES.bulletSpeed, owner: 'player', dimension: this.dimension, life: 1.55 });
     this.emit('shot');
     this.burst(p.x + dir.x * 26, p.y + dir.y * 26, 'muzzle', 3);
   }
   hurtPlayer(amount) {
     const p = this.player;
-    if (this.phase !== 'playing' || p.invulnerable > 0) return;
+    if (this.phase !== 'playing' || p.invulnerable > 0 || this.ultimate.dash) return;
     p.hp = Math.max(0, p.hp - amount); p.invulnerable = .72;
     this.damageFlash = 1; this.stats.damageTaken += amount;
     this.burst(p.x, p.y, 'blood', 12); this.emit('hurt');
     this.numbers.push({ x: p.x, y: p.y, text: `−${amount}`, kind: 'hurt', life: .85 });
     if (p.hp <= 0) { this.phase = 'dead'; this.emit('dead'); }
   }
-  hurtEnemy(amount, dimension, enemy = this.enemy) {
+  hurtEnemy(amount, dimension, enemy = this.enemy, source = 'pistol', direction = null) {
     if (this.phase !== 'playing' || !enemy || enemy.hp <= 0) return;
     const resistance = enemy.kind === 'boss' ? RULES.armor : RULES.echoArmor;
     let actual = amount * (dimension === 'material' ? resistance : 1);
-    let detonated = false;
+    let detonated = false, fullRupture = false;
     if (dimension === 'material') {
       enemy.fractures = Math.min(RULES.maxFractures, enemy.fractures + 1);
       enemy.fractureTime = RULES.fractureDuration;
     } else if (enemy.fractures > 0 && enemy.fractureTime > 0) {
+      fullRupture = enemy.fractures === RULES.maxFractures;
       actual += enemy.fractures * RULES.fractureDamage;
       enemy.fractures = 0; enemy.fractureTime = 0;
-      enemy.stunned = RULES.fractureStun; enemy.attack = null;
-      enemy.cooldown = Math.max(enemy.cooldown, .6);
+      if (fullRupture) {
+        enemy.stunned = RULES.fractureStun; enemy.attack = null;
+        enemy.cooldown = Math.max(enemy.cooldown, .6);
+        this.hitStop = .05; this.impact = 1;
+      }
       this.stats.detonations++; detonated = true;
-      this.rings.push({ x: enemy.x, y: enemy.y, life: .55, max: .55, dimension, kind: 'detonation' });
-      this.emit('detonation');
+      this.rings.push({ x: enemy.x, y: enemy.y, life: .55, max: .55, dimension, kind: 'detonation', strong: fullRupture });
+      this.emit(fullRupture ? 'rupture' : 'detonation');
     }
+    const damage = Math.min(enemy.hp, actual), u = this.ultimate;
+    if (source !== 'ultimate' && u.timer === 0) {
+      const oldCharge = u.charge;
+      u.charge = Math.min(100, u.charge + damage * RULES.ultimateGain);
+      if (oldCharge < 100 && u.charge === 100) this.emit('ultimateReady');
+    }
+    enemy.reaction = fullRupture ? 1 : .35;
+    enemy.hitDirection = direction || unit(enemy.x-this.player.x,enemy.y-this.player.y);
     enemy.hp = Math.max(0, enemy.hp - actual); enemy.flash = .12;
     this.stats.hits++;
     this.numbers.push({ x: enemy.x + (Math.random() - .5) * 12, y: enemy.y, text: String(Math.round(actual)), kind: detonated ? 'detonation' : dimension, life: detonated ? .95 : .65 });
     this.burst(enemy.x, enemy.y, dimension === 'material' ? 'stone' : 'blood', 6);
     this.emit('hit', { armored: dimension === 'material' });
     if (enemy.hp <= 0) {
-      enemy.attack = null; this.stats.kills++;
+      enemy.attack = null; enemy.deathTime = this.time; this.stats.kills++;
       this.burst(enemy.x, enemy.y, 'blood', enemy.kind === 'boss' ? 30 : 12);
       if (this.roomId === 'boss') { this.phase = 'won'; this.rifts = []; this.emit('won'); }
       else if (this.remaining === 0 && !this.cleared) {
@@ -219,25 +294,35 @@ class Combat {
   }
   update(dt, input = {}) {
     if (this.phase !== 'playing') return;
-    dt = clamp(dt, 0, .04); this.time += dt;
+    dt = clamp(dt, 0, .04);
+    if (this.hitStop > 0) { this.hitStop = Math.max(0,this.hitStop-dt); return; }
+    this.time += dt;
+    this.impact = Math.max(0,this.impact-dt*6);
+    for (const trail of this.trails) trail.life -= dt;
+    this.trails = this.trails.filter(t=>t.life>0);
     const p = this.player, radius = this.room.radius;
+    p.recoil = Math.max(0,(p.recoil || 0)-dt*9);
     p.fire = Math.max(0, p.fire - dt); p.invulnerable = Math.max(0, p.invulnerable - dt);
     this.shift = Math.max(0, this.shift - dt); this.shiftFlash = Math.max(0, this.shiftFlash - dt * 2.6);
     this.damageFlash = Math.max(0, this.damageFlash - dt * 2.8);
     for (const enemy of this.enemies) {
+      enemy.reaction = Math.max(0,enemy.reaction-dt*5);
       enemy.flash = Math.max(0, enemy.flash - dt);
       enemy.fractureTime = Math.max(0, enemy.fractureTime - dt);
       if (enemy.fractureTime === 0) enemy.fractures = 0;
     }
+    const dashing = this.updateUltimate(dt);
     const movement = input.move || { x: 0, y: 0 }, length = Math.hypot(movement.x, movement.y);
     p.moving = length > 0;
+    if (!dashing) {
     p.vx = length > 0 ? movement.x / length * RULES.playerSpeed : 0;
     p.vy = length > 0 ? movement.y / length * RULES.playerSpeed : 0;
     if (length > 0) {
       p.x = clamp(p.x + movement.x / length * RULES.playerSpeed * dt, -radius + 15, radius - 15);
       p.y = clamp(p.y + movement.y / length * RULES.playerSpeed * dt, -radius + 15, radius - 15);
     }
-    if (input.aim) p.facing = unit(input.aim.x - p.x, input.aim.y - p.y);
+    }
+    if (input.aim && !dashing) p.facing = unit(input.aim.x - p.x, input.aim.y - p.y);
     if (input.shooting && input.aim) this.shoot(input.aim);
     this.updatePressure(dt);
     if (this.phase !== 'playing') return;
@@ -321,7 +406,7 @@ class Combat {
     }
     // Bodies share the same floor in both planes; prevent overlapping silhouettes.
     const overlap = e.radius + RULES.playerRadius - distance(p, e);
-    if (overlap > 0) {
+    if (overlap > 0 && !this.ultimate.dash) {
       const away = unit(p.x - e.x, p.y - e.y);
       p.x = clamp(p.x + away.x * overlap, -radius + 15, radius - 15);
       p.y = clamp(p.y + away.y * overlap, -radius + 15, radius - 15);
@@ -338,7 +423,7 @@ class Combat {
       if (active && b.owner === 'player') {
         const targets = this.enemies.filter(e => e.hp > 0 && segmentDistance(e, old, b) < e.radius + 3);
         targets.sort((a,c) => distance(a,old) - distance(c,old));
-        if (targets.length) { this.hurtEnemy(RULES.shotDamage, b.dimension, targets[0]); b.life = 0; }
+        if (targets.length) { this.hurtEnemy(b.damage ?? RULES.shotDamage, b.dimension, targets[0], b.source, {x:b.dx,y:b.dy}); b.life = 0; }
       } else if (active && b.owner === 'enemy' && segmentDistance(this.player, old, b) < RULES.playerRadius + 7) {
         this.hurtPlayer(b.damage ?? RULES.spiritDamage); b.life = 0;
       }
@@ -420,14 +505,22 @@ class Renderer {
     ctx.globalAlpha = .18;
     for (let x = 30; x < this.width; x += 34) for (let y = 30; y < this.height; y += 34) { ctx.fillStyle = p.light; ctx.fillRect(x, y, 1, 1); }
     ctx.globalAlpha = 1;
+    ctx.save();
+    if (!this.reducedMotion && game.impact>0) ctx.translate(Math.sin(t*83)*game.impact*3,Math.cos(t*67)*game.impact*2);
     this.drawRoom(p, t, game.dimension, game.room.floor, game.roomId);
     if (game.roomId === 'hall') this.drawExit(game, p);
     this.drawRifts(game);
     for (const enemy of game.enemies) this.drawTelegraph(game, p, enemy);
     for (const r of game.rings) {
       const c = this.project(r.x, r.y), progress = 1 - r.life / r.max;
-      ctx.save(); ctx.globalAlpha = r.life / r.max; ctx.strokeStyle = r.kind === 'detonation' ? '#f5d48c' : p.accent; ctx.lineWidth = r.kind === 'detonation' ? 4 : 2;
+      ctx.save(); ctx.globalAlpha = r.life / r.max; ctx.strokeStyle = r.kind === 'detonation' ? '#f5d48c' : p.accent; ctx.lineWidth = r.strong ? 6 : r.kind === 'detonation' ? 3 : 2;
       ctx.beginPath(); ctx.ellipse(c.x, c.y, (20 + progress * 115) * this.scale, (10 + progress * 59) * this.scale, 0, 0, TAU); ctx.stroke(); ctx.restore();
+    }
+    if (!this.reducedMotion) for (const trail of game.trails) {
+      const q=this.project(trail.x,trail.y);
+      ctx.save();ctx.globalAlpha=trail.life/.22*.3;
+      this.poly([{x:q.x-9*this.scale,y:q.y},{x:q.x-12*this.scale,y:q.y-47*this.scale},{x:q.x,y:q.y-64*this.scale},{x:q.x+12*this.scale,y:q.y-47*this.scale},{x:q.x+9*this.scale,y:q.y}],p.accent);
+      ctx.restore();
     }
     this.drawAim(game);
     const actors = [ { kind: 'player', ...game.player }, ...game.enemies ].sort((a, b) => a.x + a.y - b.x - b.y);
@@ -452,6 +545,7 @@ class Renderer {
     if (game.shiftFlash > 0 && !this.reducedMotion) {
       ctx.fillStyle = p.accent; ctx.globalAlpha = game.shiftFlash * .06; ctx.fillRect(0, 0, this.width, this.height); ctx.globalAlpha = 1;
     }
+    ctx.restore();
     if (game.roomId === 'hall') this.drawMinimap(game, p);
     if (pointer.inside && game.phase === 'playing') this.drawCrosshair(pointer, p);
   }
@@ -577,7 +671,8 @@ class Renderer {
     this.ellipse(q.x,q.y+2*s,23*s,10*s,'#0006');
     this.glow(q.x,q.y,68*s,palette.glow,.12);
     ctx.save();ctx.translate(q.x,q.y);ctx.scale(s,s);
-    if(p.invulnerable>0)ctx.globalAlpha=.55+Math.sin(game.time*38)*.2;
+    if(game.ultimate.dash) { this.ellipse(0,-30,24,38,palette.glow+'44'); }
+    if(p.invulnerable>0&&!game.ultimate.dash&&!this.reducedMotion)ctx.globalAlpha=.55+Math.sin(game.time*38)*.2;
     const poly=(coords,fill,stroke)=>this.poly(coords.map(([x,y])=>({x,y})),fill,stroke);
     // Boots, split coat, shoulders, hair, and an off-white face.
     poly([[-11,-20],[-2,-20],[-4,walking-2],[-15,walking-2]],'#141910','#3a4032');
@@ -589,10 +684,10 @@ class Renderer {
     poly([[-10,-63],[6,-66],[11,-59],[-7,-57],[-9,-51],[-13,-54]],'#2b3025');
     const aim={x:(p.facing.x-p.facing.y)*.95,y:(p.facing.x+p.facing.y)*.52};
     const angle=Math.atan2(aim.y,aim.x);
-    ctx.save();ctx.translate(2,-32);ctx.rotate(angle);
+    ctx.save();ctx.translate(2,-32);ctx.rotate(angle);ctx.translate(-(p.recoil||0)*9,0);ctx.rotate(-(p.recoil||0)*.16);
     ctx.fillStyle='#7f8d69';ctx.fillRect(2,-4,19,8);ctx.fillStyle='#c4bea0';ctx.fillRect(18,-3,7,6);
     ctx.fillStyle='#242a22';ctx.fillRect(22,-5,17,7);ctx.fillStyle='#bcc2a6';ctx.fillRect(24,-5,15,2);ctx.fillStyle='#252b20';ctx.fillRect(22,1,5,7);
-    if(p.fire>RULES.shotInterval-.055) {
+    if(p.fire>RULES.shotInterval-.055&&!this.reducedMotion) {
       poly([[40,-2],[48,-7],[46,-1],[53,1],[45,3],[47,7],[39,3]],'#f3dfa2');
     }
     ctx.restore();
@@ -602,14 +697,18 @@ class Renderer {
   }
   drawEnemy(game,palette,e) {
     const ctx=this.ctx,s=this.scale*(e.kind==='boss'?1:.65),q=this.project(e.x,e.y),spirit=game.dimension==='spirit';
-    if(e.hp<=0) {
+    const dying=e.hp<=0, collapse=dying?game.phase==='won'?1:clamp((game.time-e.deathTime)/.25,0,1):0;
+    if(dying && (collapse>=1 || this.reducedMotion)) {
       this.ellipse(q.x,q.y,43*s,20*s,'#682f4166');
       this.floorPoly([[e.x-22,e.y-17],[e.x+27,e.y-8],[e.x+10,e.y+25],[e.x-20,e.y+15]],palette.blood,palette.light);
       return;
     }
     this.ellipse(q.x,q.y+2*s,37*s,18*s,'#0007');
     const bob=Math.sin(game.time*(spirit?3.5:2))*2;
-    ctx.save();ctx.translate(q.x,q.y+bob*s);ctx.scale(s,s);
+    const reaction=this.reducedMotion?0:(e.reaction||0),dir=e.hitDirection||{x:0,y:0};
+    ctx.save();ctx.translate(q.x+(dir.x-dir.y)*reaction*12*s,q.y+bob*s+(dir.x+dir.y)*reaction*6*s);ctx.scale(s,s);
+    if(dying) {ctx.scale(1+collapse*.25,1-collapse*.85);ctx.globalAlpha=1-collapse*.5;}
+    ctx.rotate((dir.x-dir.y)*reaction*.12);
     const poly=(coords,fill,stroke)=>this.poly(coords.map(([x,y])=>({x,y})),fill,stroke);
     if(!spirit) {
       poly([[-24,-35],[-10,-32],[-10,-5],[-30,-3]],'#53594a','#8e9278');
@@ -720,10 +819,22 @@ class Sound {
     if (this.enabled) this.play('shift');
     return this.enabled;
   }
+  noise(duration, volume, frequency) {
+    const ctx=this.context, length=Math.ceil(ctx.sampleRate*duration), buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<length;i++)data[i]=(Math.random()*2-1)*(1-i/length);
+    const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+    source.buffer=buffer;filter.type='lowpass';filter.frequency.value=frequency;
+    gain.gain.setValueAtTime(volume,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    source.connect(filter);filter.connect(gain);gain.connect(this.master);source.start();
+    source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+  }
   play(type) {
     if (!this.enabled || !this.context || this.context.state !== 'running') return;
     const ctx=this.context,t=ctx.currentTime;
-    const tones={detonation:[95,32,.3,'sawtooth',.6],riftWarning:[350,130,.3,'sine',.18],shot:[130,42,.08,'sawtooth',.55],hit:[290,100,.065,'triangle',.3],armor:[730,320,.06,'square',.12],shift:[65,270,.42,'sine',.65],hurt:[105,35,.24,'sawtooth',.4],warning:[170,110,.18,'sine',.3],enemyShot:[280,70,.2,'triangle',.4],charge:[90,45,.2,'sawtooth',.3],won:[220,440,.6,'sine',.4],dead:[90,20,.8,'sawtooth',.3]};
+    if(type==='shot')this.noise(.065,.7,4200);
+    if(type==='rupture'||type==='volley')this.noise(.22,.6,1600);
+    const tones={rupture:[72,24,.34,'sine',.9],dash:[180,55,.16,'triangle',.45],volley:[110,35,.18,'sawtooth',.45],ultimateReady:[440,880,.3,'sine',.3],detonation:[95,32,.3,'sawtooth',.6],riftWarning:[350,130,.3,'sine',.18],shot:[130,42,.08,'sawtooth',.55],hit:[290,100,.065,'triangle',.3],armor:[730,320,.06,'square',.12],shift:[65,270,.42,'sine',.65],hurt:[105,35,.24,'sawtooth',.4],warning:[170,110,.18,'sine',.3],enemyShot:[280,70,.2,'triangle',.4],charge:[90,45,.2,'sawtooth',.3],won:[220,440,.6,'sine',.4],dead:[90,20,.8,'sawtooth',.3]};
     const spec=tones[type];if(!spec)return;
     const [from,to,length,wave,volume]=spec,osc=ctx.createOscillator(),gain=ctx.createGain();
     osc.type=wave;osc.frequency.setValueAtTime(from,t);osc.frequency.exponentialRampToValueAtTime(to,t+length);
@@ -766,7 +877,7 @@ window.addEventListener('pointerup', () => { pointer.down = false; });
 canvas.addEventListener('contextmenu', event => event.preventDefault());
 window.addEventListener('keydown', event => {
   if (event.ctrlKey || event.metaKey || event.altKey) return;
-  const gameplayKey = ['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyE','KeyF','KeyR','Escape'].includes(event.code);
+  const gameplayKey = ['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyE','KeyF','KeyQ','KeyR','Escape'].includes(event.code);
   if (!gameplayKey) return;
   // Native Enter/Space button activation remains available outside the arena.
   if (event.target instanceof HTMLButtonElement && event.code === 'Space') return;
@@ -776,6 +887,7 @@ window.addEventListener('keydown', event => {
   if (event.code === 'Escape') togglePause();
   if (event.code === 'KeyR' && game.phase !== 'intro') start();
   if (event.code === 'Space' || event.code === 'KeyE') game.cross();
+  if (event.code === 'KeyQ') game.useUltimate(pointer.inside ? renderer.aimAt(pointer.x,pointer.y,game.enemies) : null);
   if (event.code === 'KeyF') game.interact();
 });
 window.addEventListener('keyup', event => keys.delete(event.code));
@@ -783,6 +895,7 @@ window.addEventListener('blur', () => { clearInput(); game.pause(); });
 document.addEventListener('visibilitychange', () => { if(document.hidden){clearInput();game.pause();} previousTime=performance.now(); });
 $('play-button').addEventListener('click', () => { if(game.phase==='paused'){game.resume();canvas.focus();}else start(); });
 $('pause-button').addEventListener('click', togglePause);
+$('ultimate-button').addEventListener('click', () => { game.useUltimate(); canvas.focus(); });
 $('exit-button').addEventListener('click', () => { game.interact(); canvas.focus(); });
 $('sound-button').addEventListener('click', async () => {
   try {
@@ -867,6 +980,11 @@ function updateHUD(now) {
       : (boss?'Exposto. Mantém distância e dispara três projéteis.':'Frágeis. Cada eco anuncia um único disparo.');
     $('threat-label').textContent=pressureHigh?'RAJADAS + FISSURAS':'PROJÉTEIS';
   }
+  const u=game.ultimate, active=u.timer>0, ready=u.charge>=100;
+  $('ultimate-value').textContent=active?`${u.remaining} / 3 · ${u.timer.toFixed(1)}s`:ready?'PRONTO':`${Math.floor(u.charge)}%`;
+  $('ultimate-fill').style.width=`${active?u.timer/RULES.ultimateWindow*100:u.charge}%`;
+  $('ultimate-button').disabled=game.phase!=='playing'||(active?u.remaining<=u.queue.length:!ready);
+  $('ultimate-hint').textContent=active?'Q novamente para encadear. Mire cada dash.':ready?'Três dashes disponíveis. Q para começar.':'Cause dano para carregar. Dash na direção da mira.';
   labels['elapsed'].textContent=`${String(Math.floor(game.time/60)).padStart(2,'0')}:${String(Math.floor(game.time%60)).padStart(2,'0')}`;
   labels['damage-vignette'].style.opacity=renderer.reducedMotion?0:game.damageFlash*.24;
   if(now>noticeUntil)$('notice').classList.remove('visible');
@@ -881,6 +999,9 @@ function frame(now) {
   game.update(dt,{move,aim,shooting:pointer.down&&pointer.inside});
   for(const event of game.drainEvents()) {
     sound.play(event.type==='hit'&&event.armored?'armor':event.type);
+    if(event.type==='ultimateReady')showNotice('ÚLTIMO RITO PRONTO · Q PARA TRÊS DASHES COM TIROS EM 360°.',3);
+    if(event.type==='ultimateEmpty')showNotice('CAUSE DANO PARA CARREGAR O ÚLTIMO RITO.',1.5);
+    if(event.type==='rupture')showNotice('RUPTURA COMPLETA · ATAQUE INTERROMPIDO.',1);
     if(event.type==='shift')showNotice(event.dimension==='spirit'?'ATIRE NOS ALVOS MARCADOS PARA DETONAR AS FRATURAS.':'PREPARE FRATURAS. A PRESSÃO ESTÁ DIMINUINDO.',2.3);
     if(event.type==='cooldown')showNotice('AGUARDE A RECARGA DA TRAVESSIA.',.8);
     if(event.type==='roomCleared')showNotice('ÁTRIO LIVRE. SIGA ATÉ A PORTA INDICADA NO MAPA.',4);
@@ -893,7 +1014,7 @@ function frame(now) {
 }
 if(new URLSearchParams(location.search).has('debug')) {
   // Read-only observability for browser smoke tests. No debug controls in normal play.
-  window.__combatSnapshot=()=>({phase:game.phase,room:game.roomId,cleared:game.cleared,remaining:game.remaining,nearExit:game.nearExit,exit:{...game.exit},dimension:game.dimension,pressure:game.pressure,rifts:structuredClone(game.rifts),time:game.time,player:{...game.player},enemy:structuredClone(game.enemy),enemies:game.enemies.map(e=>({...structuredClone(e),screen:renderer.project(e.x,e.y,e.kind==='boss'?52:34)})),shift:game.shift,stats:{...game.stats},bullets:structuredClone(game.bullets),screen:{enemy:renderer.project(game.enemy.x,game.enemy.y,22),player:renderer.project(game.player.x,game.player.y,22),exit:renderer.project(game.exit.x,game.exit.y)}});
+  window.__combatSnapshot=()=>({phase:game.phase,room:game.roomId,cleared:game.cleared,remaining:game.remaining,nearExit:game.nearExit,exit:{...game.exit},dimension:game.dimension,pressure:game.pressure,ultimate:structuredClone(game.ultimate),hitStop:game.hitStop,rifts:structuredClone(game.rifts),time:game.time,player:{...game.player},enemy:structuredClone(game.enemy),enemies:game.enemies.map(e=>({...structuredClone(e),screen:renderer.project(e.x,e.y,e.kind==='boss'?52:34)})),shift:game.shift,stats:{...game.stats},bullets:structuredClone(game.bullets),screen:{enemy:renderer.project(game.enemy.x,game.enemy.y,22),player:renderer.project(game.player.x,game.player.y,22),exit:renderer.project(game.exit.x,game.exit.y)}});
 }
 requestAnimationFrame(frame);
 
