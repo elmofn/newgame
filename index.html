@@ -46,7 +46,7 @@
 <body>
   <div class="app" data-dimension="material">
     <header class="topbar">
-      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 005</span></a>
+      <a class="wordmark" href="" aria-label="O Intervalo, início"><span class="brand-mark" aria-hidden="true">◈</span> O INTERVALO<span class="edition">ESTUDO DE COMBATE / 006</span></a>
       <div class="top-actions">
         <span class="prototype-label"><i></i> PROTÓTIPO JOGÁVEL</span>
         <button id="sound-button" class="icon-button" aria-label="Ativar som" aria-pressed="false" title="Ativar som">SOM <span>OFF</span></button>
@@ -87,14 +87,14 @@
         <div class="objective"><span class="eyebrow">SEU OBJETIVO</span><div class="route"><span id="route-hall" class="active">01 ÁTRIO</span><span>→</span><span id="route-boss">02 INQUILINO</span></div><p id="objective-text">Elimine os ecos e libere a passagem.</p><span id="objective-caption">Sua vida continua na próxima sala.</span></div>
       </aside>
     </main>
-    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>005</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
+    <footer class="footer"><span>REGISTRO EXPERIMENTAL <b>006</b></span><span>“Sua morte está prevista para amanhã.”</span><span>SEM CHECKPOINT.</span></footer>
   </div>
   <script type="module">
 const RULES = Object.freeze({
   room: 310, playerSpeed: 195, playerRadius: 13, enemyRadius: 27, playerHealth: 100,
-  enemyHealth: 360, shotDamage: 6, shotInterval: .13, bulletSpeed: 670,
+  enemyHealth: 360, shotDamage: 6, shotInterval: .18, bulletSpeed: 670,
   shiftCooldown: 2.2, armor: .55, echoArmor: .8, spiritDamage: 32,
-  maxFractures: 3, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
+  maxFractures: 6, fractureDuration: 6, fractureDamage: 26, fractureStun: .55,
   ultimateWindow: 6, dashDuration: .42, dashDistance: 155, ultimateBullets: 16, ultimateDamage: 8, ultimateGain: .55,
   pressureGain: 15, pressureRecovery: 25, pressureThreshold: 60,
   riftWarning: .9, riftDuration: 1.2, riftInterval: 1.15, riftRadius: 75, riftDamage: 14, riftLead: .65,
@@ -137,7 +137,7 @@ class Combat {
       id: `${id}-${index}`, kind: boss ? 'boss' : 'echo', x, y,
       hp: boss ? RULES.enemyHealth : 48, maxHp: boss ? RULES.enemyHealth : 48,
       radius: boss ? RULES.enemyRadius : 18, attack: null,
-      fractures: 0, fractureTime: 0, stunned: 0, reaction: 0, hitDirection: { x: 0, y: 0 },
+      fractures: 0, fractureTime: 0, fractureReadyAge: null, stunned: 0, reaction: 0, hitDirection: { x: 0, y: 0 },
       cooldown: boss ? 1.15 : 1.5 + index * .55, flash: 0, facing: { x: 1, y: 1 },
     });
     this.enemies = id === 'hall'
@@ -258,16 +258,20 @@ class Combat {
     if (this.phase !== 'playing' || !enemy || enemy.hp <= 0) return;
     const resistance = enemy.kind === 'boss' ? RULES.armor : RULES.echoArmor;
     let actual = amount * (dimension === 'material' ? resistance : 1);
-    let detonated = false, fullRupture = false;
+    let detonated = false, fullRupture = false, markBecameReady = false;
     if (dimension === 'material') {
       if (mark) {
+        const oldFractures=enemy.fractures;
         enemy.fractures = Math.min(RULES.maxFractures, enemy.fractures + 1);
         enemy.fractureTime = RULES.fractureDuration;
+        if(oldFractures<RULES.maxFractures&&enemy.fractures===RULES.maxFractures) {
+          markBecameReady=true;
+        }
       }
     } else if (enemy.fractures > 0 && enemy.fractureTime > 0) {
       fullRupture = enemy.fractures === RULES.maxFractures;
       actual += enemy.fractures * RULES.fractureDamage;
-      enemy.fractures = 0; enemy.fractureTime = 0;
+      enemy.fractures = 0; enemy.fractureTime = 0;enemy.fractureReadyAge=null;
       if (fullRupture) {
         enemy.stunned = RULES.fractureStun; enemy.attack = null;
         enemy.cooldown = Math.max(enemy.cooldown, .6);
@@ -286,12 +290,13 @@ class Combat {
     enemy.reaction = fullRupture ? 1 : .35;
     enemy.hitDirection = direction || unit(enemy.x-this.player.x,enemy.y-this.player.y);
     enemy.hp = Math.max(0, enemy.hp - actual); enemy.flash = .12;
+    if(markBecameReady&&enemy.hp>0) {enemy.fractureReadyAge=0;this.emit('markReady');}
     this.stats.hits++;
     this.numbers.push({ x: enemy.x + (Math.random() - .5) * 12, y: enemy.y, text: String(Math.round(actual)), kind: detonated ? 'detonation' : dimension, life: detonated ? .95 : .65 });
     this.burst(enemy.x, enemy.y, dimension === 'material' ? 'stone' : 'blood', 6);
     this.emit('hit', { armored: dimension === 'material' });
     if (enemy.hp <= 0) {
-      enemy.attack = null; enemy.deathTime = this.time; this.stats.kills++;
+      enemy.attack = null; enemy.fractures=0;enemy.fractureReadyAge=null;enemy.deathTime = this.time; this.stats.kills++;
       this.burst(enemy.x, enemy.y, 'blood', enemy.kind === 'boss' ? 30 : 12);
       if (this.roomId === 'boss') { this.phase = 'won'; this.rifts = []; this.emit('won'); }
       else if (this.remaining === 0 && !this.cleared) {
@@ -329,7 +334,8 @@ class Combat {
       enemy.reaction = Math.max(0,enemy.reaction-dt*5);
       enemy.flash = Math.max(0, enemy.flash - dt);
       enemy.fractureTime = Math.max(0, enemy.fractureTime - dt);
-      if (enemy.fractureTime === 0) enemy.fractures = 0;
+      if (enemy.fractureReadyAge!==null)enemy.fractureReadyAge+=dt;
+      if (enemy.fractureTime === 0) {enemy.fractures = 0;enemy.fractureReadyAge=null;}
     }
     const dashing = this.updateUltimate(dt);
     const movement = input.move || { x: 0, y: 0 }, length = Math.hypot(movement.x, movement.y);
@@ -820,6 +826,14 @@ class Renderer {
         ctx.fillText('SAÍDA',x,y+20);
       }
     }
+    if(e.fractures===RULES.maxFractures&&e.fractureReadyAge!==null) {
+      const age=e.fractureReadyAge,fade=clamp(age/.32,0,1),shake=age<.58?Math.sin(age*88)*(1-age/.58)*4*this.scale:0;
+      const x=q.x+shake,y=q.y-(e.kind==='boss'?178:150)*this.scale+Math.cos(age*77)*(1-fade)*2*this.scale;
+      ctx.save();ctx.globalAlpha=fade;ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.lineWidth=3.4*this.scale;
+      ctx.shadowColor='#fff';ctx.shadowBlur=25*this.scale;
+      ctx.beginPath();ctx.moveTo(x-11*this.scale,y);ctx.lineTo(x+11*this.scale,y);ctx.moveTo(x,y-11*this.scale);ctx.lineTo(x,y+11*this.scale);ctx.stroke();
+      ctx.beginPath();ctx.arc(x,y,2.8*this.scale,0,TAU);ctx.fill();ctx.restore();
+    }
   }
   drawMinimap(game,palette) {
     const ctx=this.ctx,cx=this.width-87,cy=115,r=game.room.floor;
@@ -878,7 +892,7 @@ class Sound {
     const ctx=this.context,t=ctx.currentTime;
     if(type==='shot')this.noise(.065,.7,4200);
     if(type==='rupture'||type==='volley')this.noise(.22,.6,1600);
-    const tones={rupture:[72,24,.34,'sine',.9],dash:[180,55,.16,'triangle',.45],volley:[110,35,.18,'sawtooth',.45],ultimateReady:[440,880,.3,'sine',.3],detonation:[95,32,.3,'sawtooth',.6],riftWarning:[350,130,.3,'sine',.18],shot:[130,42,.08,'sawtooth',.55],hit:[290,100,.065,'triangle',.3],armor:[730,320,.06,'square',.12],shift:[65,270,.42,'sine',.65],hurt:[105,35,.24,'sawtooth',.4],warning:[170,110,.18,'sine',.3],enemyShot:[280,70,.2,'triangle',.4],charge:[90,45,.2,'sawtooth',.3],won:[220,440,.6,'sine',.4],dead:[90,20,.8,'sawtooth',.3]};
+    const tones={rupture:[72,24,.34,'sine',.9],dash:[180,55,.16,'triangle',.45],volley:[110,35,.18,'sawtooth',.45],ultimateReady:[440,880,.3,'sine',.3],markReady:[980,1480,.28,'sine',.36],detonation:[95,32,.3,'sawtooth',.6],riftWarning:[350,130,.3,'sine',.18],shot:[130,42,.08,'sawtooth',.55],hit:[290,100,.065,'triangle',.3],armor:[730,320,.06,'square',.12],shift:[65,270,.42,'sine',.65],hurt:[105,35,.24,'sawtooth',.4],warning:[170,110,.18,'sine',.3],enemyShot:[280,70,.2,'triangle',.4],charge:[90,45,.2,'sawtooth',.3],won:[220,440,.6,'sine',.4],dead:[90,20,.8,'sawtooth',.3]};
     const spec=tones[type];if(!spec)return;
     const [from,to,length,wave,volume]=spec,osc=ctx.createOscillator(),gain=ctx.createGain();
     osc.type=wave;osc.frequency.setValueAtTime(from,t);osc.frequency.exponentialRampToValueAtTime(to,t+length);
@@ -957,7 +971,7 @@ function updateDimension() {
   const spirit=game.dimension==='spirit',boss=game.roomId==='boss';app.dataset.dimension=game.dimension;
   $('dimension-label').innerHTML=`<i></i> PLANO ${spirit?'ESPIRITUAL':'MATERIAL'}`;
   $('material-tab').classList.toggle('active',!spirit);$('spirit-tab').classList.toggle('active',spirit);
-  $('dimension-description').textContent=spirit?'Detone as fraturas com um tiro. Permanecer aqui aumenta a pressão.':'A pistola principal cria até 3 fraturas. A outra mantém o dano. Atravesse para detonar.';
+  $('dimension-description').textContent=spirit?'Detone as fraturas com um tiro. Permanecer aqui aumenta a pressão.':'A pistola principal marca a cada 2 tiros. Complete 6 marcas e atravesse para detonar.';
   $('enemy-description').textContent=boss
     ? (spirit?'Exposto. Mantém distância e dispara três projéteis.':'Lento. Blindado. Aproxima-se e investe em linha reta.')
     : (spirit?'Frágeis. Cada eco anuncia um único disparo.':'Quatro presenças. Aproximam-se e dão investidas curtas.');
@@ -1044,6 +1058,7 @@ function frame(now) {
   for(const event of game.drainEvents()) {
     sound.play(event.type==='hit'&&event.armored?'armor':event.type);
     if(event.type==='ultimateReady')showNotice('ÚLTIMO RITO PRONTO · Q PARA TRÊS DASHES COM TIROS EM 360°.',3);
+    if(event.type==='markReady')showNotice('SEIS MARCAS · RUPTURA PRONTA.',1.7);
     if(event.type==='ultimateEmpty')showNotice('CAUSE DANO PARA CARREGAR O ÚLTIMO RITO.',1.5);
     if(event.type==='rupture')showNotice('RUPTURA COMPLETA · ATAQUE INTERROMPIDO.',1);
     if(event.type==='shift')showNotice(event.dimension==='spirit'?'ATIRE NOS ALVOS MARCADOS PARA DETONAR AS FRATURAS.':'PREPARE FRATURAS. A PRESSÃO ESTÁ DIMINUINDO.',2.3);
